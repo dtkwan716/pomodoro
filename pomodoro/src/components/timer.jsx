@@ -14,7 +14,7 @@ const Timer = ({isRunning, isReset}) => {
     }
     if (!isRunning) return;
     setTimeout(() => {
-      setTime(time - 1000);
+      setTime(prevTime => prevTime - 1000);
       if (time <= 0) {
         setIsBreak(!isBreak);
         if (!isBreak) {setBreakCounter(breakCounter + 1);}
@@ -26,6 +26,7 @@ const Timer = ({isRunning, isReset}) => {
             setTime(3000);
           }
       }
+      return () => clearTimeout();
     }, 1000);
     
     },[time, isRunning]);

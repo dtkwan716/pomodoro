@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Timer from './components/timer'
+import Camera from './components/camera'
 
 function App() {
   const [isRunning, setIsRunning] = useState(false)
@@ -8,7 +9,7 @@ function App() {
     <div>
       <h1>Domodoro Timer</h1>
       <Timer isRunning={isRunning} isReset={isReset}/>
-      <button onClick={() => {setIsRunning(true); setIsReset(false);}}> Start Session </button>
+      <button onClick={() => {setIsRunning(true); setIsReset(false);}}> {isReset ? "Start Session" : "Continue Session"} </button>
       <button onClick={() => setIsRunning(false)}> Stop Session </button>
       <button onClick={() => {
         setIsRunning(false);
@@ -16,6 +17,7 @@ function App() {
       }}>
         Reset Session
       </button>
+      <Camera />
     </div>
   ) 
 }
