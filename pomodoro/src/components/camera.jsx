@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import { FilesetResolver, FaceDetector, DrawingUtils } from '@mediapipe/tasks-vision';
 
 
-const Camera = () => {
+const Camera = ({ setIsFaceDetected }) => {
     const [error, setError] = useState(null);
     const videoRef = useRef(null);
     const lastVideoTime = useRef(-1);
@@ -57,6 +57,7 @@ const Camera = () => {
         }
         if (video.currentTime !== lastVideoTime.current) {
             results.current = faceDetector.current.detectForVideo(video, performance.now());
+            setIsFaceDetected(results.current.detections.length > 0);
             console.log(results.current);
             
 
@@ -86,7 +87,7 @@ const Camera = () => {
         if (!results?.detections?.length) return;
 
         for (const detection of results.detections) {
-            drawingUtils.drawBoundingBox(detection.boundingBox, {color: 'red', lineWidth: 4, fillColor: 'transparent'});
+            drawingUtils.drawBoundingBox(detection.boundingBox, {color: 'green', lineWidth: 4, fillColor: 'transparent'});
         }
         console.log(canvas.width, canvas.height, videoRef.current.videoWidth, videoRef.current.videoHeight);
     }

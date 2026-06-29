@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
+import Camera from './camera'
 
-const Timer = ({isRunning, isReset}) => {
+const Timer = ({isRunning, isReset, isFaceDetected}) => {
   const [time, setTime] = useState(5000);
   const [isBreak, setIsBreak] = useState(false);
   const [breakCounter, setBreakCounter] = useState(0);
@@ -12,7 +13,7 @@ const Timer = ({isRunning, isReset}) => {
       setBreakCounter(0);
       return;
     }
-    if (!isRunning) return;
+    if (!isRunning || !isFaceDetected) return;
     setTimeout(() => {
       setTime(prevTime => prevTime - 1000);
       if (time <= 0) {
@@ -29,7 +30,7 @@ const Timer = ({isRunning, isReset}) => {
       return () => clearTimeout();
     }, 1000);
     
-    },[time, isRunning]);
+    },[time, isRunning, isFaceDetected]);
 
     const getFormattedTime = (miliseconds) => {
       let total_seconds = parseInt(Math.floor(miliseconds / 1000));
