@@ -8,8 +8,9 @@ const Camera = ({ setIsFaceDetected }) => {
     const lastVideoTime = useRef(-1);
     const faceDetector = useRef(null);
     const results = useRef(null);
-    const canvasRef = useRef(null);
+    const canvasRef = useRef(null);1
 
+    //Gets the Camera
     useEffect(() => {
         const getVideo = async () => { 
             try {
@@ -26,6 +27,7 @@ const Camera = ({ setIsFaceDetected }) => {
         getVideo();
     }, []);
     
+    //Creates the FaceDetector
     useEffect(() => {
         const initFaceDetector = async () => {
         const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm');
@@ -45,6 +47,7 @@ const Camera = ({ setIsFaceDetected }) => {
     }, [])
     
 
+    //The loop the call FaceDetector every frame
     function renderLoop() {
         const video = videoRef.current;
         console.log("Render loop started");
@@ -69,6 +72,7 @@ const Camera = ({ setIsFaceDetected }) => {
         });
     }
 
+    //Draws the Box
     function drawResults(results){
         const canvas = canvasRef.current;
     if(!canvas){
