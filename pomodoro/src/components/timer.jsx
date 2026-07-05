@@ -16,7 +16,7 @@ const Timer = ({isRunning, isReset, isFaceDetected, notif}) => {
       return;
     }
     //Pauses Timer
-    if (!isRunning || (!isFaceDetected && !isBreak)) return;
+    if (!isRunning || (isFaceDetected === 0 && !isBreak)) return;
 
     //Timer Logic for Pomodoro
     const timerId = setTimeout(() => {

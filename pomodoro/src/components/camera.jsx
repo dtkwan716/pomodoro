@@ -8,7 +8,7 @@ const Camera = ({ setIsFaceDetected }) => {
     const lastVideoTime = useRef(-1);
     const faceDetector = useRef(null);
     const results = useRef(null);
-    const canvasRef = useRef(null);1
+    const canvasRef = useRef(null);
 
     //Gets the Camera
     useEffect(() => {
@@ -18,7 +18,7 @@ const Camera = ({ setIsFaceDetected }) => {
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream;
                 }
-                console.log("Camera works");
+                setError(null);
             }
             catch (err) {
                 setError("Camera could not be accessed.");
@@ -26,26 +26,26 @@ const Camera = ({ setIsFaceDetected }) => {
         }
         getVideo();
     }, []);
-    
-    //Creates the FaceDetector
+
+        //Creates the FaceDetector
     useEffect(() => {
         const initFaceDetector = async () => {
         const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm');
-
+        
         faceDetector.current = await FaceDetector.createFromOptions(
             vision, 
             {
-                baseOptions: {
-                    modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/latest/blaze_face_short_range.tflite"
-                },
-                runningMode: "VIDEO"
+            baseOptions: {
+                modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/latest/blaze_face_short_range.tflite"
+            },
+            runningMode: "VIDEO"
             });
-                renderLoop();
+            renderLoop();
         }
         initFaceDetector();
         console.log("Face detector works");
     }, [])
-    
+        
 
     //The loop the call FaceDetector every frame
     function renderLoop() {
@@ -60,11 +60,14 @@ const Camera = ({ setIsFaceDetected }) => {
         }
         if (video.currentTime !== lastVideoTime.current) {
             results.current = faceDetector.current.detectForVideo(video, performance.now());
-            setIsFaceDetected(results.current.detections.length > 0);
-            console.log(results.current);
-            
 
-            lastVideoTime.current = video.currentTime;  
+        if(error === null) {
+            setIsFaceDetected(results.current.detections.length);  
+        } else {
+            setIsFaceDetected(-1);
+        }
+
+        lastVideoTime.current = video.currentTime;  
         }
         drawResults(results.current);
         requestAnimationFrame(() => {
@@ -75,10 +78,10 @@ const Camera = ({ setIsFaceDetected }) => {
     //Draws the Box
     function drawResults(results){
         const canvas = canvasRef.current;
-    if(!canvas){
-        console.log("Canvas not ready");
-        return;
-    }
+        if(!canvas){
+            console.log("Canvas not ready");
+            return;
+        }
 
         const ctx = canvas.getContext("2d");
 
@@ -93,10 +96,8 @@ const Camera = ({ setIsFaceDetected }) => {
         for (const detection of results.detections) {
             drawingUtils.drawBoundingBox(detection.boundingBox, {color: 'green', lineWidth: 4, fillColor: 'transparent'});
         }
-        console.log(canvas.width, canvas.height, videoRef.current.videoWidth, videoRef.current.videoHeight);
-    }
-
-
+            console.log(canvas.width, canvas.height, videoRef.current.videoWidth, videoRef.current.videoHeight);
+        }
 
         return (
             <div style={{position: "relative", width: "fit-content"}}>
