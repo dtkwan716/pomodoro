@@ -1,189 +1,330 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-}
-
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
-}
-
-#center {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
-}
-
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
-}
-
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
-}
-
-.ticks {
-  position: relative;
+.app-shell {
   width: 100%;
-
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
-  }
-
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
-  }
+  height: 100svh;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(280px, 340px) minmax(420px, 1fr) minmax(220px, 280px);
+  grid-template-rows: minmax(0, 1fr) 260px;
+  grid-template-areas:
+    "timer focus todo"
+    "timer camera todo";
+  align-content: stretch;
+  align-items: stretch;
+  gap: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
-.react-switch-checkbox{
+.timer-panel,
+.timer-focus,
+.camera-panel,
+.todo-panel {
+  background: var(--surface);
+}
+
+.timer-panel {
+  grid-area: timer;
+  min-height: 0;
+  padding: 0;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  border-right: 1px solid var(--border);
+}
+
+.sidebar-section {
+  min-height: 0;
+  padding: 28px;
+  display: grid;
+  align-content: start;
+  gap: 22px;
+}
+
+.controls-section {
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-header {
+  width: 100%;
+}
+
+.sidebar-header .eyebrow {
+  text-align: left;
+}
+
+.app-header {
+  display: grid;
+  gap: 4px;
+  text-align: center;
+}
+
+.eyebrow {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.timer-focus {
+  grid-area: focus;
+  min-height: 0;
+  padding: 22px 32px 8px;
+  display: grid;
+  align-content: end;
+  justify-items: center;
+  gap: 18px;
+  background: var(--panel);
+}
+
+.timer-display {
+  width: 100%;
+  max-width: 640px;
+  padding: 34px 16px;
+  border-block: 1px solid var(--border);
+  color: var(--text-h);
+  font-family: var(--mono);
+  font-size: clamp(96px, 14vw, 172px);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.session-actions {
+  width: 100%;
+  max-width: 320px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+button {
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--button-border);
+  border-radius: 6px;
+  background: var(--button-bg);
+  color: var(--text-h);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+button:hover {
+  background: var(--button-hover);
+  border-color: var(--button-hover-border);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button:focus-visible,
+.react-switch-checkbox:focus-visible + .react-switch-label {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.notification-row {
+  width: 100%;
+  padding-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.camera-panel {
+  grid-area: camera;
+  min-height: 0;
+  padding: 0 32px 20px;
+  display: grid;
+  align-content: start;
+  overflow: auto;
+  background: var(--panel);
+}
+
+.camera-panel > div {
+  width: 100%;
+  max-width: 520px;
+  justify-self: center;
+}
+
+.camera-panel video {
+  width: 100%;
+  max-height: 170px;
+  display: block;
+  background: #111827;
+  object-fit: contain;
+  border: 1px solid var(--border);
+}
+
+.camera-panel canvas {
+  border-radius: 0;
+}
+
+.camera-panel p {
+  padding: 16px;
+  color: var(--text-h);
+  text-align: center;
+}
+
+.todo-panel {
+  grid-area: todo;
+  min-height: 0;
+  padding: 24px;
+  border-left: 1px solid var(--border);
+}
+
+.todo-panel h2 {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.todo-list {
+  margin-top: 18px;
+  display: grid;
+  gap: 5px;
+}
+
+.todo-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.todo-input {
+  min-width: 0;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--button-border);
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--text-h);
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.todo-input::placeholder {
+  color: #9ca3af;
+}
+
+.todo-input:focus {
+  border-color: #6b7280;
+  box-shadow: 0 0 0 3px var(--focus);
+}
+
+.todo-add {
+  min-width: 56px;
+  background: #111827;
+  border-color: #111827;
+  color: #ffffff;
+}
+
+.todo-add:hover {
+  background: #374151;
+  border-color: #374151;
+}
+
+.todo-item {
+  min-height: 28px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  padding: 1px 0;
+}
+
+.todo-item:hover {
+  background: transparent;
+}
+
+.todo-text {
+  min-width: 0;
+  padding: 0;
+  color: var(--text-h);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+
+.todo-text:hover {
+  color: #374151;
+}
+
+.todo-text:focus-visible {
+  outline: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.todo-item.is-completed {
+  background: transparent;
+}
+
+.todo-item.is-completed .todo-text {
+  color: #8b95a1;
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+
+.todo-delete {
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  min-height: 24px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+}
+
+.todo-delete:hover {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.todo-delete:active {
+  transform: none;
+}
+
+.react-switch-checkbox {
   height: 0;
   width: 0;
   visibility: hidden;
@@ -197,9 +338,10 @@
   width: 50px;
   height: 25px;
   background: grey;
-  border-radius: 50px;
+  border-radius: 999px;
   position: relative;
   transition: background-color .2s;
+  flex: 0 0 auto;
 }
 
 .react-switch-label .react-switch-button {
@@ -220,3 +362,185 @@
   transform: translateX(-100%);
 }
 
+@media (max-width: 1180px) {
+  .app-shell {
+    grid-template-columns: minmax(230px, 280px) minmax(340px, 1fr) minmax(190px, 230px);
+    grid-template-rows: minmax(0, 1fr) 220px;
+  }
+
+  .timer-panel {
+    padding: 22px;
+  }
+
+  .sidebar-section {
+    padding: 0;
+  }
+
+  .timer-focus {
+    padding: 18px 24px 8px;
+  }
+
+  .timer-display {
+    max-width: 540px;
+    padding: 26px 14px;
+    font-size: clamp(82px, 12vw, 140px);
+  }
+
+  .camera-panel {
+    padding: 0 24px 18px;
+  }
+
+  .camera-panel video {
+    max-height: 150px;
+  }
+
+  .todo-panel {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 960px) {
+  .app-shell {
+    height: 100svh;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "timer"
+      "focus"
+      "camera"
+      "todo";
+    grid-template-rows: auto minmax(0, 1fr) 210px auto;
+    align-content: start;
+  }
+
+  .timer-panel {
+    min-height: auto;
+    padding: 0;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-section {
+    padding: 14px 16px;
+    gap: 10px;
+  }
+
+  .controls-section {
+    border-right: 1px solid var(--border);
+    border-bottom: 0;
+  }
+
+  .timer-panel .sidebar-header {
+    display: none;
+  }
+
+  .timer-display {
+    max-width: 420px;
+    padding: 14px 12px;
+    font-size: clamp(54px, 17vw, 86px);
+  }
+
+  .timer-focus {
+    min-height: auto;
+    padding: 18px 16px 0;
+    gap: 12px;
+  }
+
+  .session-actions {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  button {
+    min-height: 38px;
+    padding: 0 8px;
+    font-size: 13px;
+  }
+
+  .notification-row {
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 13px;
+  }
+
+  .camera-panel {
+    min-height: 0;
+    padding: 0 16px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .camera-panel video {
+    max-height: 125px;
+  }
+
+  .todo-panel {
+    min-height: 0;
+    padding: 12px 16px;
+    border-left: 0;
+    border-top: 1px solid var(--border);
+  }
+}
+
+@media (max-width: 480px) {
+  .session-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-height: 700px) {
+  .app-shell {
+    height: auto;
+    min-height: 100svh;
+    grid-template-rows: minmax(280px, 1fr) 180px;
+    overflow: visible;
+  }
+
+  .timer-panel {
+    gap: 16px;
+  }
+
+  .sidebar-section {
+    padding: 18px;
+  }
+
+  .timer-focus {
+    padding: 18px 24px 6px;
+    gap: 10px;
+  }
+
+  .timer-display {
+    max-width: 500px;
+    padding: 20px 12px;
+    font-size: clamp(72px, 12vw, 122px);
+  }
+
+  .camera-panel {
+    padding: 0 24px 16px;
+  }
+
+  .camera-panel video {
+    max-height: 140px;
+  }
+
+  .todo-panel {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 960px) and (max-height: 760px) {
+  .app-shell {
+    height: auto;
+    min-height: 100svh;
+    grid-template-rows: auto auto auto auto;
+    overflow: visible;
+  }
+
+  .timer-focus {
+    padding: 18px 16px 10px;
+  }
+
+  .camera-panel video {
+    max-height: 150px;
+  }
+}

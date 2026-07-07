@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import Camera from './camera'
 
 const Timer = ({isRunning, isReset, isFaceDetected, notif}) => {
   const [time, setTime] = useState(5000);
@@ -53,7 +52,7 @@ const Timer = ({isRunning, isReset, isFaceDetected, notif}) => {
       return `${fminutes}:${fseconds}`;
     }
 
-  return <div>{getFormattedTime(time)}</div>;
+  return <div className="timer-display">{getFormattedTime(time)}</div>;
 }
 
 export default Timer;
