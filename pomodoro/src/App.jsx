@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Timer from './components/timer'
 import Camera from './components/camera'
 import Todo from './components/todo'
-import {ToastContainer, toast, Slide} from 'react-toastify'
+import Tooltip from '@mui/material/Tooltip';
 import './App.css'
 
 function App() {
@@ -11,14 +11,19 @@ function App() {
   const [isReset, setIsReset] = useState(true)
   const [isFaceDetected, setIsFaceDetected] = useState(false)
   const [isNotifOn, setIsNotifOn] = useState(false)
+  const showNotification = (message) => {
+    if (!isNotifOn || !('Notification' in window) || Notification.permission !== 'granted') return;
+    new Notification(message);
+  };
+
   const breakNotif = () => {
-    if (!isNotifOn) return;
-    toast.success("Good Job, Time for a break!", {autoClose: 2000});
+    showNotification("Good Job, Time for a break!");
   };
+
   const workNotif = () => {
-    if (!isNotifOn) return;
-    toast.warning("Break is over get back to work.", {autoClose: 2000});
+    showNotification("Break is over get back to work.");
   };
+
 
   return (
     <main className="app-shell">
@@ -52,7 +57,7 @@ function App() {
             className="react-switch-checkbox" 
             id={`react-switch-new`}
             type="checkbox"
-            onChange={() => setIsNotifOn(!isNotifOn)}
+            onChange={() => {setIsNotifOn(!isNotifOn); Notification.requestPermission();}}
             />
             <label 
               style={{ background: isNotifOn ? '#166534' : '#6b7280' }}
@@ -62,13 +67,17 @@ function App() {
               <span className={`react-switch-button`} />
             </label>
             <span>Allow Notifications?</span>
+            <Tooltip title="Allow notifications on your website for this to work." arrow> 
+              <button className="notification-help-button" type="button">
+                ⓘ
+              </button>
+            </Tooltip>
           </div>
         </div>
       </section>
 
       <section className="timer-focus" aria-label="Current time">
         <div className="app-header">
-          <p className="eyebrow">Focus session</p>
           <h1>Domodoro Timer</h1>
         </div>
 
@@ -83,20 +92,6 @@ function App() {
         <h2>Todo</h2>
         <Todo />
       </aside>
-
-      <ToastContainer
-        position="bottom-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover={false}
-        theme="light"
-        transition={Slide} 
-      />
 
     </main>
   ) 

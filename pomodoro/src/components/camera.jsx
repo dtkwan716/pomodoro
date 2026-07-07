@@ -25,9 +25,10 @@ const Camera = ({ setIsFaceDetected }) => {
             }
         }
         getVideo();
+        console.log("Camera works");
     }, []);
 
-        //Creates the FaceDetector
+    //Creates the FaceDetector
     useEffect(() => {
         const initFaceDetector = async () => {
         const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm');
@@ -45,7 +46,6 @@ const Camera = ({ setIsFaceDetected }) => {
         initFaceDetector();
         console.log("Face detector works");
     }, [])
-        
 
     //The loop the call FaceDetector every frame
     function renderLoop() {
@@ -105,6 +105,9 @@ const Camera = ({ setIsFaceDetected }) => {
                 <video 
                     ref={videoRef} 
                     autoPlay
+                    playsInline
+                    muted
+                    style={{width: "100%", height: "auto"}}
                     onLoadedMetadata={() => {
                         const video = videoRef.current;
                         const canvas = canvasRef.current;
