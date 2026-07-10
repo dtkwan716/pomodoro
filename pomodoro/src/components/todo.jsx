@@ -1,11 +1,18 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 
 function Todo() {
-    const [tasks, setTasks] = useState([]);
+    const [tasks, setTasks] = useState(() => {
+        const savedTasks = localStorage.getItem("tasks");
+        return savedTasks ? JSON.parse(savedTasks) : [];
+    });
     const [text, setText] = useState('');
     const [dueDate, setDueDate] = useState('');
     const dateInputRef = useRef(null);
         
+    useEffect(() => {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+    }, [tasks]);
+
     function addTask(event) {
     event.preventDefault();
     if (!text.trim()) return;
@@ -52,13 +59,23 @@ function Todo() {
     }
 
     const pastDue = (dueDate) => {
-        if (!dueDate) return false;
+        if (!dueDate) return null;
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const dateDue = new Date(dueDate);
+        console.log(today)
+        const [year, month, day] = dueDate.split("-");
+        const dateDue = new Date(year, month - 1, day); 
         dateDue.setHours(0, 0, 0, 0);
+        console.log(dateDue);
 
-        return dateDue < today;
+        if (dateDue < today){
+            return "Overdue"; 
+        } else if (dateDue > today){
+            return "Soon";
+        } else {
+            return "Today";
+            console.log("start dancing");
+        }
     }
 
     function openDatePicker() {
@@ -114,8 +131,8 @@ function Todo() {
                     aria-label={`Mark ${task.text} as ${task.completed ? 'incomplete' : 'complete'}`}
                 >
                     {task.dueDate && (
-                        <span className="todo-date" style={{ color: pastDue(task.dueDate) ? '#d53c3c' : 'inherit' }}>
-                            {pastDue(task.dueDate) ? "Overdue" : formatDueDate(task.dueDate)}
+                        <span className="todo-date" style={{ color: pastDue(task.dueDate) == "Overdue" ? '#d53c3c' : pastDue(task.dueDate) == "Today" ? '#fadb7e' : 'inherit' }}>
+                            {pastDue(task.dueDate) == "Overdue" ? "Overdue" : pastDue(task.dueDate) == "Today" ? "Today" : formatDueDate(task.dueDate)}
                         </span>
                     )}
                     {task.text}

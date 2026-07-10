@@ -135,6 +135,52 @@ button:focus-visible,
   outline-offset: 2px;
 }
 
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(17, 24, 39, 0.45);
+  box-sizing: border-box;
+}
+
+.session-modal {
+  width: min(420px, 100%);
+  padding: 24px;
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 24px 60px rgba(17, 24, 39, 0.22);
+}
+
+.session-modal h2 {
+  margin: 0 0 4px;
+  color: var(--text-h);
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.session-modal p {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.session-modal button {
+  margin-top: 8px;
+  justify-self: end;
+  min-width: 84px;
+}
+
 .notification-row {
   width: 100%;
   padding-top: 4px;
@@ -243,7 +289,7 @@ button:focus-visible,
   background:
     linear-gradient(var(--border), var(--border)) calc(100% - 90px) center / 1px 22px no-repeat,
     linear-gradient(var(--border), var(--border)) calc(100% - 52px) center / 1px 22px no-repeat,
-    #ffffff;
+    var(--button-bg);
 }
 
 .todo-input {

@@ -96,8 +96,7 @@ const Camera = ({ setIsFaceDetected }) => {
         for (const detection of results.detections) {
             drawingUtils.drawBoundingBox(detection.boundingBox, {color: 'green', lineWidth: 4, fillColor: 'transparent'});
         }
-            console.log(canvas.width, canvas.height, videoRef.current.videoWidth, videoRef.current.videoHeight);
-        }
+    }
 
         return (
             <div style={{position: "relative", width: "fit-content"}}>
