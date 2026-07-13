@@ -1,14 +1,17 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { FilesetResolver, FaceDetector, DrawingUtils } from '@mediapipe/tasks-vision';
+import { FilesetResolver, FaceDetector, DrawingUtils, GestureRecognizer, HandLandmarker } from '@mediapipe/tasks-vision';
 
 
-const Camera = ({ setIsFaceDetected }) => {
+const Camera = ({ setIsFaceDetected, setIsGestureDetected }) => {
     const [error, setError] = useState(null);
     const videoRef = useRef(null);
-    const lastVideoTime = useRef(-1);
+    const lastFaceCheck = useRef(0);
+    const lastGestureCheck = useRef(0);
     const faceDetector = useRef(null);
-    const results = useRef(null);
+    const faceResults = useRef(null);
+    const gestureResults = useRef(null);
     const canvasRef = useRef(null);
+    const gestureRecognizer = useRef(null);
 
     //Gets the Camera
     useEffect(() => {
@@ -22,6 +25,7 @@ const Camera = ({ setIsFaceDetected }) => {
             }
             catch (err) {
                 setError("Camera could not be accessed.");
+                setIsFaceDetected(-1);
             }
         }
         getVideo();
@@ -41,42 +45,58 @@ const Camera = ({ setIsFaceDetected }) => {
             },
             runningMode: "VIDEO"
             });
+        
+        gestureRecognizer.current = await GestureRecognizer.createFromOptions(
+            vision, 
+            {
+            baseOptions: {
+                modelAssetPath: "https://storage.googleapis.com/mediapipe-tasks/gesture_recognizer/gesture_recognizer.task"
+            },  
+            runningMode:"VIDEO",
+            numHands: 1
+            });
             renderLoop();
         }
         initFaceDetector();
         console.log("Face detector works");
-    }, [])
+        }, [])
 
     //The loop the call FaceDetector every frame
-    function renderLoop() {
+    function renderLoop(timestamp) {
         const video = videoRef.current;
-        console.log("Render loop started");
 
-        if (!video || !faceDetector.current ||  video.readyState < 2 || video.videoWidth === 0 || video.videoHeight === 0) {
-            requestAnimationFrame(() => {
-                renderLoop();
-            });
+        if (!video ||  video.readyState < 2) {
+            requestAnimationFrame(renderLoop);
             return;
         }
-        if (video.currentTime !== lastVideoTime.current) {
-            results.current = faceDetector.current.detectForVideo(video, performance.now());
 
-        if(error === null) {
-            setIsFaceDetected(results.current.detections.length);  
+        if (timestamp - lastFaceCheck.current >= 200){
+            faceResults.current =  faceDetector.current.detectForVideo(video, timestamp);
+
+            lastFaceCheck.current = timestamp;
+        }
+
+        if (gestureRecognizer.current && timestamp - lastGestureCheck.current >= 400){
+            gestureResults.current = gestureRecognizer.current.recognizeForVideo(video, timestamp);
+
+            lastGestureCheck.current = timestamp;
+        }
+
+        if(faceResults.current) setIsFaceDetected(faceResults.current.detections.length);  
+        if(gestureResults.current?.gestures?.[0]?.[0]?.categoryName == "Closed_Fist") {
+            setIsGestureDetected(true);
         } else {
-            setIsFaceDetected(-1);
+            setIsGestureDetected(false);
         }
-
-        lastVideoTime.current = video.currentTime;  
+        drawResults(faceResults.current, gestureResults.current);
+        if (gestureResults.current?.gestures?.[0]?.[0]?.categoryName === "Thumb_Up"){
+            console.log("ITS WORKING HAHAA");
         }
-        drawResults(results.current);
-        requestAnimationFrame(() => {
-            renderLoop();
-        });
+        requestAnimationFrame(renderLoop);
     }
 
     //Draws the Box
-    function drawResults(results){
+    function drawResults(faceresults, gestureresults){
         const canvas = canvasRef.current;
         if(!canvas){
             console.log("Canvas not ready");
@@ -91,11 +111,24 @@ const Camera = ({ setIsFaceDetected }) => {
 
 
 
-        if (!results?.detections?.length) return;
+        if (!faceresults?.detections?.length) return;
 
-        for (const detection of results.detections) {
+        for (const detection of faceresults.detections) {
             drawingUtils.drawBoundingBox(detection.boundingBox, {color: 'green', lineWidth: 4, fillColor: 'transparent'});
         }
+
+        for (const landmarks of gestureresults.landmarks) {
+            drawingUtils.drawConnectors(
+                landmarks,
+                HandLandmarker.HAND_CONNECTIONS,
+                {color: "lime", lineWidth: 3}
+            );
+
+            drawingUtils.drawLandmarks(
+                landmarks,
+                {color: "red", radius: 3}
+            );
+        }   
     }
 
         return (

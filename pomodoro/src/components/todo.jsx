@@ -62,11 +62,9 @@ function Todo() {
         if (!dueDate) return null;
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        console.log(today)
         const [year, month, day] = dueDate.split("-");
         const dateDue = new Date(year, month - 1, day); 
         dateDue.setHours(0, 0, 0, 0);
-        console.log(dateDue);
 
         if (dateDue < today){
             return "Overdue"; 
@@ -74,7 +72,6 @@ function Todo() {
             return "Soon";
         } else {
             return "Today";
-            console.log("start dancing");
         }
     }
 

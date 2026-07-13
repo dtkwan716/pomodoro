@@ -1,6 +1,7 @@
+import { GestureRecognizer } from '@mediapipe/tasks-vision';
 import { useState, useEffect, useRef } from 'react'
 
-const Timer = ({isRunning, isReset, isFaceDetected, notif, activeSession, onSessionEnd}) => {
+const Timer = ({isRunning, isReset, isFaceDetected, notif, activeSession, onSessionEnd, isGestureDetected, showNotification}) => {
   const [time, setTime] = useState(5000);
   const [isBreak, setIsBreak] = useState(false);
   const [breakCounter, setBreakCounter] = useState(0);
@@ -9,6 +10,13 @@ const Timer = ({isRunning, isReset, isFaceDetected, notif, activeSession, onSess
   const pauseStartRef = useRef(null);
   const totalBreakRef = useRef(0);
   const totalPauseRef = useRef(0);
+
+  useEffect(() => {
+    if (isGestureDetected){
+      showNotification(`Time remaining: ${getFormattedTime(time)}`);
+    }
+  }, [isGestureDetected]);
+
 
   //Track session data
   useEffect(() => {
@@ -114,6 +122,10 @@ const Timer = ({isRunning, isReset, isFaceDetected, notif, activeSession, onSess
       }
     }, 1000);
     return () => clearTimeout(timerId);
+
+    if (isGestureDetected == true){
+      showNotification(time);
+    }
     
     },[time, isRunning, isFaceDetected, isReset]);
 

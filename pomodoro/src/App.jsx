@@ -10,6 +10,7 @@ function App() {
   const [isRunning, setIsRunning] = useState(false)
   const [isReset, setIsReset] = useState(true)
   const [isFaceDetected, setIsFaceDetected] = useState(false)
+  const [isGestureDetected, setIsGestureDetected] = useState(false);
   const [isNotifOn, setIsNotifOn] =  useState(() => {
     const savedNotif = JSON.parse(localStorage.getItem("notifperm"));
     return savedNotif ? savedNotif : false;
@@ -31,6 +32,8 @@ function App() {
   const workNotif = () => {
     showNotification("Break is over get back to work.");
   };
+
+
 
   const [sessionSummary, setSessionSummary] = useState(null);
 
@@ -152,7 +155,7 @@ function App() {
           <h1>Domodoro Timer</h1>
         </div>
 
-        <Timer isRunning={isRunning} isReset={isReset} isFaceDetected={isFaceDetected} notif={{break: breakNotif, work: workNotif}} isNotifOn={isNotifOn} activeSession={activeSession} onSessionEnd={setSessionSummary}/>
+        <Timer isRunning={isRunning} isReset={isReset} isFaceDetected={isFaceDetected} isGestureDetected={isGestureDetected} notif={{break: breakNotif, work: workNotif}} isNotifOn={isNotifOn} activeSession={activeSession} onSessionEnd={setSessionSummary} showNotification={showNotification}/>
 
         {sessionSummary && (
           <div className="modal-backdrop">
@@ -175,7 +178,7 @@ function App() {
       </section>
 
       <section className="camera-panel" aria-label="Camera">
-        <Camera setIsFaceDetected={setIsFaceDetected} />
+        <Camera setIsFaceDetected={setIsFaceDetected} setIsGestureDetected={setIsGestureDetected}/>
       </section>
 
       <aside className="todo-panel" aria-label="Todo list area">
