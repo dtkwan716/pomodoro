@@ -70,6 +70,13 @@ function App() {
     }
   }, [isNotifOn]);
 
+  useEffect(() => {
+    if (isGestureDetected === "open"){
+      setIsRunning(true);
+    } else if (isGestureDetected === "close"){
+      setIsRunning(false);
+    }
+  }, [isGestureDetected]);
   return (
     <main className="app-shell">
       <section className="timer-panel" aria-label="Pomodoro timer">
@@ -155,7 +162,7 @@ function App() {
           <h1>Domodoro Timer</h1>
         </div>
 
-        <Timer isRunning={isRunning} isReset={isReset} isFaceDetected={isFaceDetected} isGestureDetected={isGestureDetected} notif={{break: breakNotif, work: workNotif}} isNotifOn={isNotifOn} activeSession={activeSession} onSessionEnd={setSessionSummary} showNotification={showNotification}/>
+        <Timer isRunning={isRunning} isReset={isReset} isFaceDetected={isFaceDetected} notif={{break: breakNotif, work: workNotif}} isNotifOn={isNotifOn} activeSession={activeSession} onSessionEnd={setSessionSummary} />
 
         {sessionSummary && (
           <div className="modal-backdrop">

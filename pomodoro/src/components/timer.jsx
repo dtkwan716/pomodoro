@@ -1,8 +1,10 @@
 import { GestureRecognizer } from '@mediapipe/tasks-vision';
 import { useState, useEffect, useRef } from 'react'
 
-const Timer = ({isRunning, isReset, isFaceDetected, notif, activeSession, onSessionEnd, isGestureDetected, showNotification}) => {
-  const [time, setTime] = useState(5000);
+const Timer = ({isRunning, isReset, isFaceDetected, notif, activeSession, onSessionEnd}) => {
+  const endTimeRef = useRef(null);
+  const [remainingTime, setRemainingTime] = useState(null);
+  const [duration, setDuration] = useState(5000);
   const [isBreak, setIsBreak] = useState(false);
   const [breakCounter, setBreakCounter] = useState(0);
   const sessionStartRef = useRef(null);
@@ -10,12 +12,6 @@ const Timer = ({isRunning, isReset, isFaceDetected, notif, activeSession, onSess
   const pauseStartRef = useRef(null);
   const totalBreakRef = useRef(0);
   const totalPauseRef = useRef(0);
-
-  useEffect(() => {
-    if (isGestureDetected){
-      showNotification(`Time remaining: ${getFormattedTime(time)}`);
-    }
-  }, [isGestureDetected]);
 
 
   //Track session data
@@ -92,46 +88,112 @@ const Timer = ({isRunning, isReset, isFaceDetected, notif, activeSession, onSess
     }
   }, [activeSession, isBreak, isRunning, onSessionEnd])
 
-  //Creates the Timer
-  useEffect(() => {
-    if (isReset) {
-      setTime(5000);
-      setIsBreak(false);
-      setBreakCounter(0);
-      return;
-    }
-    //Pauses Timer
-    if (!isRunning || (isFaceDetected === 0 && !isBreak)) return;
+useEffect(() => {
+  if (isReset) {
+    setRemainingTime(5000);
+    setIsBreak(false);
+    setBreakCounter(0);
+    endTimeRef.current = null;
+    return;
+  }
 
-    //Timer Logic for Pomodoro
-    const timerId = setTimeout(() => {
-      setTime(prevTime => prevTime - 1000);
-      if (time <= 0) {
-        setIsBreak(!isBreak);
-        if (!isBreak) {setBreakCounter(breakCounter + 1);}
-          if (breakCounter % 3 == 0 && !isBreak && breakCounter != 0) {
-            setTime(15000);
-            notif.break();
-          } else if (isBreak) {
-            setTime(5000);
-            notif.work();
-          } else {
-            setTime(3000);
-            notif.break();
-          }
+  const facePaused =
+    isFaceDetected === 0 &&
+    !isBreak &&
+    !document.hidden;
+
+  const canRun =
+    activeSession &&
+    isRunning &&
+    !facePaused;
+
+  // Pause the timer
+  if (!canRun) {
+    if (endTimeRef.current !== null) {
+      const pausedRemaining = Math.max(
+        0,
+        endTimeRef.current - Date.now()
+      );
+
+      setRemainingTime(pausedRemaining);
+      endTimeRef.current = null;
+    }
+
+    return;
+  }
+
+  // Start or resume the current period
+  if (endTimeRef.current === null) {
+    endTimeRef.current = Date.now() + remainingTime;
+  }
+
+  const timerId = setTimeout(() => {
+    const now = Date.now();
+
+    let localEndTime = endTimeRef.current;
+    let localIsBreak = isBreak;
+    let localBreakCounter = breakCounter;
+
+    // Catch up through every period that ended while the tab was inactive
+    while (now >= localEndTime) {
+      let nextDuration;
+
+      if (!localIsBreak) {
+        // Work period ended, so begin a break
+        localBreakCounter += 1;
+        localIsBreak = true;
+
+        const isLongBreak = localBreakCounter % 3 === 0;
+
+        nextDuration = isLongBreak
+          ? 15000
+          : 3000;
+      } else {
+        // Break ended, so begin another work period
+        localIsBreak = false;
+        nextDuration = 5000;
       }
-    }, 1000);
-    return () => clearTimeout(timerId);
 
-    if (isGestureDetected == true){
-      showNotification(time);
+      // Continue from the previous scheduled ending time
+      localEndTime += nextDuration;
     }
-    
-    },[time, isRunning, isFaceDetected, isReset]);
+
+    const newRemainingTime = Math.max(
+      0,
+      localEndTime - now
+    );
+
+    const phaseChanged = localIsBreak !== isBreak;
+
+    endTimeRef.current = localEndTime;
+    setRemainingTime(newRemainingTime);
+    setIsBreak(localIsBreak);
+    setBreakCounter(localBreakCounter);
+
+    if (phaseChanged) {
+      if (localIsBreak) {
+        notif.break();
+      } else {
+        notif.work();
+      }
+    }
+  }, 250);
+
+  return () => clearTimeout(timerId);
+}, [
+  activeSession,
+  isRunning,
+  isFaceDetected,
+  isReset,
+  isBreak,
+  breakCounter,
+  remainingTime,
+  notif,
+]);
 
     //Function to format Timer (i.e 01:00 instead of 1:0)
     const getFormattedTime = (miliseconds) => {
-      let total_seconds = parseInt(Math.floor(miliseconds / 1000));
+      let total_seconds = parseInt(Math.ceil(miliseconds / 1000));
       let total_minutes = parseInt(Math.floor(total_seconds / 60));
 
       let seconds = parseInt(total_seconds % 60);
@@ -144,7 +206,7 @@ const Timer = ({isRunning, isReset, isFaceDetected, notif, activeSession, onSess
 
   return (
   <div className="timer-display">
-    {getFormattedTime(time)}
+    {getFormattedTime(remainingTime)}
   </div>
   );
 }

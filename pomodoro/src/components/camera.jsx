@@ -84,14 +84,13 @@ const Camera = ({ setIsFaceDetected, setIsGestureDetected }) => {
 
         if(faceResults.current) setIsFaceDetected(faceResults.current.detections.length);  
         if(gestureResults.current?.gestures?.[0]?.[0]?.categoryName == "Closed_Fist") {
-            setIsGestureDetected(true);
+            setIsGestureDetected("close");
+        } else if (gestureResults.current?.gestures?.[0]?.[0]?.categoryName == "Open_Palm"){
+            setIsGestureDetected("open");
         } else {
-            setIsGestureDetected(false);
+            setIsGestureDetected(null);
         }
         drawResults(faceResults.current, gestureResults.current);
-        if (gestureResults.current?.gestures?.[0]?.[0]?.categoryName === "Thumb_Up"){
-            console.log("ITS WORKING HAHAA");
-        }
         requestAnimationFrame(renderLoop);
     }
 
