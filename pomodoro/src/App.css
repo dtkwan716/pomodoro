@@ -28,7 +28,7 @@
   min-height: 0;
   padding: 0;
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
   border-right: 1px solid var(--border);
 }
 
@@ -179,6 +179,75 @@ button:focus-visible,
   margin-top: 8px;
   justify-self: end;
   min-width: 84px;
+}
+
+.account-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(17, 24, 39, 0.45);
+  backdrop-filter: blur(6px);
+  box-sizing: border-box;
+}
+
+.account-modal {
+  width: min(460px, 100%);
+  max-height: min(560px, calc(100svh - 48px));
+  padding: 28px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  box-sizing: border-box;
+  outline: none;
+}
+
+.account-modal form {
+  display: grid;
+  gap: 18px;
+}
+
+.account-modal h2 {
+  margin: 0;
+  color: var(--text-h);
+  font-size: 22px;
+  line-height: 1.15;
+}
+
+.account-modal form > div {
+  display: grid;
+  gap: 10px;
+}
+
+.account-modal input {
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--button-border);
+  border-radius: 6px;
+  background: var(--button-bg);
+  color: var(--text-h);
+  font: inherit;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.account-modal input::placeholder {
+  color: var(--text-muted);
+}
+
+.account-modal input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.account-modal p {
+  color: var(--text);
+  font-size: 14px;
 }
 
 .notification-row {
@@ -569,7 +638,7 @@ button:focus-visible,
   .timer-panel {
     min-height: auto;
     padding: 0;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: auto;
     border-right: 0;
     border-bottom: 1px solid var(--border);
@@ -583,6 +652,10 @@ button:focus-visible,
   .controls-section {
     border-right: 1px solid var(--border);
     border-bottom: 0;
+  }
+
+  .settings-section {
+    border-right: 1px solid var(--border);
   }
 
   .timer-panel .sidebar-header {
@@ -599,6 +672,17 @@ button:focus-visible,
     min-height: auto;
     padding: 18px 16px 0;
     gap: 12px;
+  }
+
+  .account-modal-overlay {
+    padding: 16px;
+  }
+
+  .account-modal {
+    width: min(420px, 100%);
+    max-height: calc(100svh - 32px);
+    padding: 22px;
+    border-radius: 10px;
   }
 
   .session-actions {
@@ -637,8 +721,26 @@ button:focus-visible,
 }
 
 @media (max-width: 480px) {
+  .timer-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .controls-section,
+  .settings-section {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
   .session-actions {
     grid-template-columns: 1fr;
+  }
+
+  .account-modal-overlay {
+    padding: 12px;
+  }
+
+  .account-modal {
+    padding: 18px;
   }
 }
 

@@ -4,7 +4,10 @@ import Timer from './components/timer'
 import Camera from './components/camera'
 import Todo from './components/todo'
 import Tooltip from '@mui/material/Tooltip';
+import Signup from './components/signup';
 import './App.css'
+import Modal from 'react-modal';
+import { AuthContextProvider } from './components/context/AuthContext';
 
 function App() {
   const [isRunning, setIsRunning] = useState(false)
@@ -32,6 +35,16 @@ function App() {
   const workNotif = () => {
     showNotification("Break is over get back to work.");
   };
+
+  const [isAuthenticated, setAuthenticated] = useState(false);
+
+  const [modalIsOpen,setIsOpen] = useState(false);
+
+  const closeModal =() => {
+      setIsOpen(false);
+  };
+
+  const [accountMode, setAccountMode] = useState("signup");
 
 
 
@@ -153,6 +166,30 @@ function App() {
               <span className={`react-switch-button`} />
             </label>
             <span>Theme</span>
+          </div>
+        </div>
+
+        <div className="sidebar-section account-section">
+          <div className="sidebar-header">
+            <p className="eyebrow">Account</p>
+          </div>
+
+          <div className="session-actions" aria-label="Account actions">
+            <button onClick={() => {setIsOpen(true); setAccountMode("signup")}}> Sign Up </button>
+            <button onClick={() => {setIsOpen(true); setAccountMode("login")}}> Log In </button>
+            <button type="button">View Profile</button>
+            <Modal
+              isOpen={modalIsOpen}
+              onRequestClose={closeModal}
+              className="account-modal"
+              overlayClassName="account-modal-overlay"
+              ariaHideApp={false}
+              contentLabel="Account modal"
+            >
+              <AuthContextProvider>
+                <Signup accountMode={accountMode}/> 
+              </AuthContextProvider>
+            </Modal>
           </div>
         </div>
       </section>
