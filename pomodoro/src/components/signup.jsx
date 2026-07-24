@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { UserAuth } from './context/AuthContext';
 
-const Signup = ({accountMode}) => {
+const Signup = ({accountMode, setAccountMode}) => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const {session, signUpNewUser} = UserAuth();
+  const {session, signUpNewUser, signInUser, signOut} = UserAuth();
 
   const handleSignUp = async (e) => {
     e.preventDefault()
@@ -16,24 +16,72 @@ const Signup = ({accountMode}) => {
       const result = await signUpNewUser(email, password)
       if(result.success){
         console.log("User Signed Up: ", email, password);
+        console.log(result.data);
+        setAccountMode('login');
+      } else {
+        setMessage(result.error);
       }
     } catch (err) {
-    setError('an error occured')
+    setMessage('an error occured');
     } finally {
       setLoading(false);
     }
   }
 
+  const handleSignIn = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    try{
+      const result = await signInUser(email, password)
+      if(result.success){
+        console.log("User Signed In: ", email, password);
+        setAccountMode('signout');
+      } else { 
+        setMessage(result.error);
+
+      }
+    } catch (err) {
+    setMessage('an error occured on sign in')
+    } finally {
+      setLoading(false); 
+    }
+  }
+
+  const handleSignOut = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    try{
+      const result = await signOut()
+      if(result.success){
+        console.log("User Signed out.");
+        setAccountMode('signup');
+      }
+    } catch (err) {
+      setMessage('an error occured on sign out: ')
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const modalText = {
+    signup: 'Sign Up',
+    login: 'Log In',
+    signout: 'Sign Out',
+  };
+
   return (
   <div>
-      <form onSubmit={handleSignUp}>
-        <h2>Sign up</h2>
+      <form onSubmit={accountMode === 'signup' ? handleSignUp : accountMode === 'login' ? handleSignIn: handleSignOut}>
+        {accountMode !== 'signout' && <h2>{modalText[accountMode]}</h2>}
         <div>
-          <input onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="p-3" type="email"/>
-          <input onChange={(e) => setPassword(e.target.value)}placeholder="Password" className="p-3" type="password"/>
-          <button type="submit" disabled={loading}> Sign up </button>
-          <button>{accountMode === 'signup' ? 'Already have an account? Log in!' : 'Don\'t have an account? Sign up!' }</button>
-          {error && <p>{error}</p>}        </div>
+          {accountMode !== 'signout' && <input onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="p-3" type="email"/>}
+          {accountMode !== 'signout' && <input onChange={(e) => setPassword(e.target.value)}placeholder="Password" className="p-3" type="password"/>}
+          <button type="submit" disabled={loading}> 
+            {modalText[accountMode]} 
+          </button>
+          {accountMode !== 'signout' && <button type="button" onClick={() => {accountMode === 'signup' ? setAccountMode('login'): setAccountMode('signup')}}> {accountMode === 'signup' ? 'Already have an account? Log in!' : 'Don\'t have an account? Sign up!' }</button>}
+          {message && <p>{message}</p>}        
+        </div>
       </form>
   </div>
   );

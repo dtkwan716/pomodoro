@@ -175,9 +175,13 @@ function App() {
           </div>
 
           <div className="session-actions" aria-label="Account actions">
-            <button onClick={() => {setIsOpen(true); setAccountMode("signup")}}> Sign Up </button>
-            <button onClick={() => {setIsOpen(true); setAccountMode("login")}}> Log In </button>
-            <button type="button">View Profile</button>
+            <button onClick={() => {setIsOpen(true)}}> Sign Up </button>
+            <Tooltip title="Set up an account or log in to see profile stats." arrow> 
+              <button className="notification-help-button" type="button">
+                ⓘ
+              </button>
+            </Tooltip>
+            {accountMode === 'signout' && <button>View Profile</button>}
             <Modal
               isOpen={modalIsOpen}
               onRequestClose={closeModal}
@@ -187,7 +191,7 @@ function App() {
               contentLabel="Account modal"
             >
               <AuthContextProvider>
-                <Signup accountMode={accountMode}/> 
+                <Signup accountMode={accountMode} setAccountMode={setAccountMode}/> 
               </AuthContextProvider>
             </Modal>
           </div>
