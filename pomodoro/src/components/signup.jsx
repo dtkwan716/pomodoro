@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { UserAuth } from './context/AuthContext';
 
-const Signup = ({accountMode, setAccountMode}) => {
+const Signup = ({accountMode, setAccountMode, setIsOpen}) => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -12,6 +12,7 @@ const Signup = ({accountMode, setAccountMode}) => {
   const handleSignUp = async (e) => {
     e.preventDefault()
     setLoading(true)
+    setMessage(" ");
     try{
       const result = await signUpNewUser(email, password)
       if(result.success){
@@ -31,11 +32,13 @@ const Signup = ({accountMode, setAccountMode}) => {
   const handleSignIn = async (e) => {
     e.preventDefault()
     setLoading(true)
+    setMessage(" ");
     try{
       const result = await signInUser(email, password)
       if(result.success){
         console.log("User Signed In: ", email, password);
         setAccountMode('signout');
+        setIsOpen(false);
       } else { 
         setMessage(result.error);
 
@@ -50,11 +53,13 @@ const Signup = ({accountMode, setAccountMode}) => {
   const handleSignOut = async (e) => {
     e.preventDefault()
     setLoading(true)
+    setMessage(" ");
     try{
       const result = await signOut()
       if(result.success){
         console.log("User Signed out.");
         setAccountMode('signup');
+        setIsOpen(false);
       }
     } catch (err) {
       setMessage('an error occured on sign out: ')
