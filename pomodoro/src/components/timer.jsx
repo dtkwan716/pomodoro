@@ -1,5 +1,9 @@
 import { GestureRecognizer } from '@mediapipe/tasks-vision';
 import { useState, useEffect, useRef } from 'react'
+import { UserAuth } from './context/AuthContext';
+import { supabase } from '../supabase';
+
+
 
 const Timer = ({isRunning, isReset, isFaceDetected, notif, activeSession, onSessionEnd}) => {
   const endTimeRef = useRef(null);
@@ -12,7 +16,8 @@ const Timer = ({isRunning, isReset, isFaceDetected, notif, activeSession, onSess
   const pauseStartRef = useRef(null);
   const totalBreakRef = useRef(0);
   const totalPauseRef = useRef(0);
-
+  
+  const {session} = UserAuth();
 
   //Track session data
   useEffect(() => {
@@ -48,6 +53,25 @@ const Timer = ({isRunning, isReset, isFaceDetected, notif, activeSession, onSess
       };
 
       onSessionEnd(data);
+      const supaInsert = async (data) => { 
+        const { error } = await supabase
+        .from('public.sessions')
+        .insert({
+          user_id: session.user.id,
+          totalTime: data.totalTime,
+          totalBreakTime: data.totalBreakTime,
+          totalWorkTime: data.totalWorkTime,
+          totalPauseTime: data.totalPauseTime,
+          tasksCompleted: data.tasksCompleted,
+          completedAt: new Date().toISOString(),
+          });
+        if(error){
+          console.log("failed to save: ", error);
+        }
+        }
+      if(session){
+        supaInsert(data);
+      }
       sessionStartRef.current = null;
       breakStartRef.current = null;
       pauseStartRef.current = null;

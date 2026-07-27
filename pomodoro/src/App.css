@@ -16,20 +16,49 @@
   overflow: hidden;
 }
 
+.app-shell-profile {
+  grid-template-columns: minmax(360px, 460px) minmax(420px, 1fr) minmax(220px, 280px);
+}
+
 .timer-panel,
+.sidebar-default,
+.sidebar-profile,
 .timer-focus,
 .camera-panel,
 .todo-panel {
   background: var(--surface);
 }
 
-.timer-panel {
+.timer-panel,
+.sidebar-default {
   grid-area: timer;
   min-height: 0;
   padding: 0;
   display: grid;
   grid-template-rows: 1fr 1fr 1fr;
   border-right: 1px solid var(--border);
+}
+
+.sidebar-profile {
+  grid-area: timer;
+  min-height: 0;
+  padding: 28px;
+  display: grid;
+  align-content: start;
+  gap: 22px;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  box-sizing: border-box;
+}
+
+.sidebar-profile .sidebar-header {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-profile > div:last-child {
+  width: 100%;
+  max-width: 320px;
 }
 
 .sidebar-section {
@@ -591,7 +620,16 @@ button:focus-visible,
     grid-template-rows: minmax(0, 1fr) 220px;
   }
 
-  .timer-panel {
+  .app-shell-profile {
+    grid-template-columns: minmax(300px, 360px) minmax(340px, 1fr) minmax(190px, 230px);
+  }
+
+  .timer-panel,
+  .sidebar-default {
+    padding: 22px;
+  }
+
+  .sidebar-profile {
     padding: 22px;
   }
 
@@ -635,13 +673,23 @@ button:focus-visible,
     align-content: start;
   }
 
-  .timer-panel {
+  .timer-panel,
+  .sidebar-default,
+  .sidebar-profile {
     min-height: auto;
     padding: 0;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto;
     border-right: 0;
     border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-default {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+  }
+
+  .sidebar-profile {
+    padding: 14px 16px;
+    gap: 10px;
   }
 
   .sidebar-section {
@@ -658,7 +706,8 @@ button:focus-visible,
     border-right: 1px solid var(--border);
   }
 
-  .timer-panel .sidebar-header {
+  .timer-panel .sidebar-header,
+  .sidebar-default .sidebar-header {
     display: none;
   }
 
@@ -721,7 +770,9 @@ button:focus-visible,
 }
 
 @media (max-width: 480px) {
-  .timer-panel {
+  .timer-panel,
+  .sidebar-default,
+  .sidebar-profile {
     grid-template-columns: 1fr;
   }
 
@@ -752,11 +803,16 @@ button:focus-visible,
     overflow: visible;
   }
 
-  .timer-panel {
+  .timer-panel,
+  .sidebar-default {
     gap: 16px;
   }
 
   .sidebar-section {
+    padding: 18px;
+  }
+
+  .sidebar-profile {
     padding: 18px;
   }
 

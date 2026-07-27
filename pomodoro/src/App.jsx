@@ -46,7 +46,7 @@ function App() {
 
   const [accountMode, setAccountMode] = useState("signup");
 
-
+  const [sidebarMode, setSideBarMode] = useState("default");
 
   const [sessionSummary, setSessionSummary] = useState(null);
 
@@ -91,8 +91,9 @@ function App() {
     }
   }, [isGestureDetected]);
   return (
-    <main className="app-shell">
-      <section className="timer-panel" aria-label="Pomodoro timer">
+    <main className={`app-shell ${sidebarMode === "profile" ? "app-shell-profile" : ""}`}>
+      <AuthContextProvider>
+      {sidebarMode === "default" && <section className="sidebar-default" aria-label="Pomodoro timer">
         <div className="sidebar-section controls-section">
           <div className="sidebar-header">
             <p className="eyebrow">Controls</p>
@@ -181,7 +182,7 @@ function App() {
                 ⓘ
               </button>
             </Tooltip>
-            {accountMode === 'signout' && <button>View Profile</button>}
+            {accountMode === 'signout' && <button onClick={() => {sidebarMode === "default" ? setSideBarMode("profile"): setSideBarMode("default")}}> View Profile</button>}
             <Modal
               isOpen={modalIsOpen}
               onRequestClose={closeModal}
@@ -190,13 +191,21 @@ function App() {
               ariaHideApp={false}
               contentLabel="Account modal"
             >
-              <AuthContextProvider>
                 <Signup accountMode={accountMode} setAccountMode={setAccountMode} setIsOpen={setIsOpen}/> 
-              </AuthContextProvider>
             </Modal>
           </div>
         </div>
-      </section>
+      </section>}
+
+      {sidebarMode === "profile" && <section className="sidebar-profile">
+        <div className="sidebar-header">
+            <p className="eyebrow">Profile</p>
+        </div>
+        <div>
+          <button onClick={() => setSideBarMode("default")}> Back </button>
+        </div>
+      </section>}      
+
 
       <section className="timer-focus" aria-label="Current time">
         <div className="app-header">
@@ -233,7 +242,7 @@ function App() {
         <h2>Todo</h2>
         <Todo />
       </aside>
-
+    </AuthContextProvider>
     </main>
   ) 
 }
