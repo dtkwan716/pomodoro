@@ -5,6 +5,7 @@ import Camera from './components/camera'
 import Todo from './components/todo'
 import Tooltip from '@mui/material/Tooltip';
 import Signup from './components/signup';
+import Profile from './components/profile';
 import './App.css'
 import Modal from 'react-modal';
 import { AuthContextProvider } from './components/context/AuthContext';
@@ -201,7 +202,8 @@ function App() {
         <div className="sidebar-header">
             <p className="eyebrow">Profile</p>
         </div>
-        <div>
+        <div> 
+          <Profile getFormattedTime={getFormattedTime} />        
           <button onClick={() => setSideBarMode("default")}> Back </button>
         </div>
       </section>}      
