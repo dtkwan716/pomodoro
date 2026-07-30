@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { UserAuth } from './context/AuthContext';
 import { supabase } from '../supabase';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
 
 
 const Profile = ({getFormattedTime}) => {
@@ -14,8 +16,39 @@ const [chartData, setChartData] = useState({
 });    
 
 useEffect(() => {
+    if(sessionHistory === null) return;
     dataSort(chartFormat);
 }, [chartFormat, sessionHistory]);
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+);
+
+const options = {
+    responsive: true,
+    plugins: {
+        title: {
+            display: true,
+            text: 'Hours Worked'
+        },
+    },
+};
+
+const data = {
+    labels: chartData.labels,
+    datasets: [
+    {
+      label: 'Total Time Studying ',
+      data: chartData.data,
+      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+    }
+    ]
+};
+
 
 const dataSort = (chartFormat) => {
     if (chartFormat === 'Day') {
@@ -37,8 +70,8 @@ const dataSort = (chartFormat) => {
             currentDate.setDate(currentDate.getDate() + 1);
         }
 
-        sessionHistory.forEach(session => {
-            const date = new Date(session.completedAt);
+        sessionHistory.forEach(sessions => {
+            const date = new Date(sessions.completedAt);
 
             if (date < startDate || date > endDate) {
                 return;
@@ -48,7 +81,7 @@ const dataSort = (chartFormat) => {
 
             dayFormat.set(
                 key,
-                dayFormat.get(key) + session.totalWorkTime
+                dayFormat.get(key) + sessions.totalWorkTime
             );
         });
 
@@ -79,8 +112,8 @@ const dataSort = (chartFormat) => {
             );
         }
 
-        sessionHistory.forEach(session => {
-            const date = new Date(session.completedAt);
+        sessionHistory.forEach(sessions => {
+            const date = new Date(sessions.completedAt);
 
             if (date < startDate || date > endDate) {
                 return;
@@ -102,7 +135,7 @@ const dataSort = (chartFormat) => {
 
             weekFormat.set(
                 key,
-                weekFormat.get(key) + session.totalWorkTime
+                weekFormat.get(key) + sessions.totalWorkTime
             );
         });
 
@@ -135,8 +168,8 @@ const dataSort = (chartFormat) => {
             currentMonth.setMonth(currentMonth.getMonth() + 1);
         }
 
-        sessionHistory.forEach(session => {
-            const date = new Date(session.completedAt);
+        sessionHistory.forEach(sessions => {
+            const date = new Date(sessions.completedAt);
 
             if (date < startDate || date > endDate) {
                 return;
@@ -149,7 +182,7 @@ const dataSort = (chartFormat) => {
 
             monthFormat.set(
                 key,
-                monthFormat.get(key) + session.totalWorkTime
+                monthFormat.get(key) + sessions.totalWorkTime
             );
         });
 
@@ -199,15 +232,9 @@ if (sessionHistory === null) {
 
 return (
     <div>
-       {sessionHistory.map((history) => ( 
-            <div key={history.id}>
-                <p>Session Total: {getFormattedTime(history.totalTime)}</p>
-                <p>Time Working: {getFormattedTime(history.totalWorkTime)}</p>
-                <p>Time on Break: {getFormattedTime(history.totalBreakTime)}</p>
-                <p>Time Paused: {getFormattedTime(history.totalPauseTime)}</p>
-                <p>Items Completed: {history.tasksCompleted}</p>  
+            <div>
+                <Bar options={options} data={data}/>
             </div>
-        ))}
         <div>
             <select value={chartFormat} onChange={(e) => setChartFormat(e.target.value)}>
                 <option value="Day"> Day </option>
