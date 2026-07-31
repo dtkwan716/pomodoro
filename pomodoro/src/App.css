@@ -17,7 +17,7 @@
 }
 
 .app-shell-profile {
-  grid-template-columns: minmax(360px, 460px) minmax(420px, 1fr) minmax(220px, 280px);
+  grid-template-columns: minmax(440px, 560px) minmax(360px, 0.9fr) minmax(220px, 280px);
 }
 
 .timer-panel,
@@ -58,7 +58,70 @@
 
 .sidebar-profile > div:last-child {
   width: 100%;
-  max-width: 320px;
+  max-width: none;
+  display: grid;
+  gap: 18px;
+}
+
+.profile-controls {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 0;
+  align-items: start;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--button-border);
+  border-radius: 6px;
+  background: var(--button-bg);
+}
+
+.profile-controls select {
+  width: 100%;
+  min-height: 34px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-h);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  appearance: auto;
+  box-shadow: none;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.profile-controls select:hover {
+  background: var(--button-hover);
+}
+
+.profile-controls select:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: -3px;
+}
+
+.profile-controls option {
+  color: #111827;
+  background: #f8fafc;
+  font: inherit;
+}
+
+.profile-controls select:first-child {
+  width: 100%;
+  border-right: 1px solid var(--button-border);
+}
+
+.sidebar-profile .profile-chart-wrap {
+  width: 100%;
+  height: min(60svh, 640px);
+  min-width: 0;
+}
+
+.sidebar-profile .profile-chart-wrap canvas {
+  width: 100% !important;
+  height: auto !important;
 }
 
 .sidebar-section {
@@ -621,7 +684,7 @@ button:focus-visible,
   }
 
   .app-shell-profile {
-    grid-template-columns: minmax(300px, 360px) minmax(340px, 1fr) minmax(190px, 230px);
+    grid-template-columns: minmax(320px, 400px) minmax(320px, 1fr) minmax(190px, 230px);
   }
 
   .timer-panel,
@@ -631,6 +694,10 @@ button:focus-visible,
 
   .sidebar-profile {
     padding: 22px;
+  }
+
+  .sidebar-profile .profile-chart-wrap {
+    height: min(54svh, 560px);
   }
 
   .sidebar-section {
@@ -690,6 +757,10 @@ button:focus-visible,
   .sidebar-profile {
     padding: 14px 16px;
     gap: 10px;
+  }
+
+  .sidebar-profile .profile-chart-wrap {
+    height: 42svh;
   }
 
   .sidebar-section {
@@ -814,6 +885,10 @@ button:focus-visible,
 
   .sidebar-profile {
     padding: 18px;
+  }
+
+  .sidebar-profile .profile-chart-wrap {
+    height: 46svh;
   }
 
   .timer-focus {
