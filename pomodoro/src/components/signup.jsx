@@ -18,7 +18,8 @@ const Signup = ({accountMode, setAccountMode, setIsOpen}) => {
       if(result.success){
         console.log("User Signed Up: ", email, password);
         console.log(result.data);
-        setAccountMode('login');
+        setAccountMode('signout');
+        setIsOpen(false);
       } else {
         setMessage(result.error);
       }

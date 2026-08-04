@@ -57,6 +57,26 @@ const isDarkTheme = typeof document !== 'undefined' && document.documentElement.
 const axisColor = isDarkTheme ? '#ffffff' : '#243447';
 const gridColor = isDarkTheme ? 'rgba(255, 255, 255, 0.14)' : 'rgba(94, 96, 206, 0.12)';
 
+const metricLabel = {
+    workTime: "Time Worked",
+    pauseTime: "Time Paused",
+    breakTime: "Time on Break",
+    sessionsCompleted: "Sessions Completed",
+    tasksCompleted: "Tasks Completed",
+};
+
+const isTimeMetric = !['sessionsCompleted', 'tasksCompleted'].includes(metric);
+const visibleRawValues = metric === 'all'
+    ? [...chartData.workTime, ...chartData.pauseTime, ...chartData.breakTime]
+    : (chartData[metric] || []);
+const largestTime = isTimeMetric ? Math.max(0, ...visibleRawValues) : 0;
+const timeUnit = largestTime < 60000
+    ? { label: 'Seconds', divisor: 1000 }
+    : largestTime < 3600000
+    ? { label: 'Minutes', divisor: 60000 }
+    : { label: 'Hours', divisor: 3600000 };
+const hasChartData = visibleRawValues.some(value => Number(value) > 0);
+
 useEffect(() => {
     if(sessionHistory === null) return;
     dataSort(chartFormat);
@@ -66,6 +86,7 @@ useEffect(() => {
 const options = {
     responsive: true,
     maintainAspectRatio: false,
+    animation: false,
     layout: {
         padding: {
             top: 8,
@@ -77,13 +98,21 @@ const options = {
     plugins: {
         title: {
             display: true,
-            text: 'Hours Worked'
-            ,
+            text: isTimeMetric
+                ? `${metric === 'all' ? 'Total Time' : metricLabel[metric]} (${timeUnit.label})`
+                : metricLabel[metric],
             color: axisColor,
             font: {
                 family: 'var(--heading)',
                 size: 15,
                 weight: 600,
+            },
+        },
+        tooltip: {
+            callbacks: {
+                label: (context) => isTimeMetric
+                    ? `${context.dataset.label}: ${context.parsed.y.toLocaleString()} ${timeUnit.label.toLowerCase()}`
+                    : `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`,
             },
         },
     },
@@ -128,35 +157,30 @@ const options = {
     },
 };
 
-const metricLabel = {
-    workTime: "Hours worked",
-    pauseTime: "Time Paused",
-    breakTime: "Time on Break",
-    sessionsCompleted: "Sessions Completed",
-    tasksCompleted: "Tasks Completed"
-}
-
 let datasets;
 
     if(metric === "all") { 
     datasets = [
     {
       label: 'Total Time Studying ',
-      data: chartData.workTime.map(time => time / 360000),
+      data: chartData.workTime.map(time => time / timeUnit.divisor),
       backgroundColor: getBarColor(0),
       borderColor: getBarColor(0),
+      minBarLength: (context) => Number(context.raw) > 0 ? 4 : 0,
     },
     {
       label: 'Total Time Paused ',
-      data: chartData.pauseTime.map(time => time / 360000),
+      data: chartData.pauseTime.map(time => time / timeUnit.divisor),
       backgroundColor: getBarColor(1),
       borderColor: getBarColor(1),
+      minBarLength: (context) => Number(context.raw) > 0 ? 4 : 0,
     },
     {
       label: 'Total Time On Break ',
-      data: chartData.breakTime.map(time => time / 360000),
+      data: chartData.breakTime.map(time => time / timeUnit.divisor),
       backgroundColor: getBarColor(2),
       borderColor: getBarColor(2),
+      minBarLength: (context) => Number(context.raw) > 0 ? 4 : 0,
     },
     ];
     } else {
@@ -168,10 +192,11 @@ let datasets;
             ? chartData.sessionsCompleted
             : metric === 'tasksCompleted'
             ? chartData.tasksCompleted
-            : chartData[metric].map(time => time / 360000)
+            : chartData[metric].map(time => time / timeUnit.divisor)
         ,
         backgroundColor: chartData.labels.map((_, index) => getBarColor(index)),
         borderColor: chartData.labels.map((_, index) => getBarColor(index)),
+        minBarLength: (context) => Number(context.raw) > 0 ? 4 : 0,
         }
     ];
     }
@@ -180,6 +205,9 @@ const data = {
     labels: chartData.labels,
     datasets: datasets,
 };
+
+// Give denser date ranges more vertical breathing room without overflowing the profile.
+const chartHeight = Math.min(640, Math.max(280, chartData.labels.length * 52));
 
 
 const dataSort = (chartFormat) => {
@@ -411,8 +439,16 @@ if (sessionHistory === null) {
 
 return (
     <div>
-            <div className="profile-chart-wrap">
+            <div
+                className="profile-chart-wrap"
+                style={{ '--chart-height': `${chartHeight}px` }}
+            >
                 <Bar options={options} data={data}/>
+                {!hasChartData && (
+                    <p className="chart-empty-state">
+                        Please log a session to display data.
+                    </p>
+                )}
             </div>
         <div className="profile-controls">
             <select value={chartFormat} onChange={(e) => setChartFormat(e.target.value)}>
