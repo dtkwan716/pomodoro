@@ -334,6 +334,7 @@ function App() {
                         <li>Session tracking and summary generation</li>
                         <li>View past sessions through the profile section</li>
                         <li>To-do list with task management</li>
+                        <p>Make sure to sign in to save your tasks.</p>
                       </ul>
                     </div>
                   </motion.div>
