@@ -8,7 +8,7 @@ import { supabase } from '../supabase';
 const Timer = ({isRunning, isReset, isFaceDetected, notif, activeSession, onSessionEnd}) => {
   const endTimeRef = useRef(null);
   const [remainingTime, setRemainingTime] = useState(null);
-  const [duration, setDuration] = useState(5000);
+  const [duration, setDuration] = useState(1500000);
   const [isBreak, setIsBreak] = useState(false);
   const [breakCounter, setBreakCounter] = useState(0);
   const sessionStartRef = useRef(null);
@@ -114,7 +114,7 @@ const Timer = ({isRunning, isReset, isFaceDetected, notif, activeSession, onSess
 
 useEffect(() => {
   if (isReset) {
-    setRemainingTime(5000);
+    setRemainingTime(1500000);
     setIsBreak(false);
     setBreakCounter(0);
     endTimeRef.current = null;
@@ -167,15 +167,15 @@ useEffect(() => {
         localBreakCounter += 1;
         localIsBreak = true;
 
-        const isLongBreak = localBreakCounter % 3 === 0;
+        const isLongBreak = localBreakCounter % 4 === 0;
 
         nextDuration = isLongBreak
-          ? 15000
-          : 3000;
+          ? 1500000
+          : 500000;
       } else {
         // Break ended, so begin another work period
         localIsBreak = false;
-        nextDuration = 5000;
+        nextDuration = 1500000;
       }
 
       // Continue from the previous scheduled ending time

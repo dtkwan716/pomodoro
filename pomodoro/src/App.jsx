@@ -384,7 +384,11 @@ function App() {
               <Camera setIsFaceDetected={setIsFaceDetected} setIsGestureDetected={setIsGestureDetected}/>
             </motion.section>
 
-            <motion.aside className="todo-panel" aria-label="Todo list area" style={{ x: isProfileOpen ? 0 : rightSidebarX }}>
+            <motion.aside
+              className="todo-panel"
+              aria-label="Todo list area"
+              style={{ x: isProfileOpen ? 0 : rightSidebarX }}
+            >
               <h2>Todo</h2>
               <Todo />
             </motion.aside>
