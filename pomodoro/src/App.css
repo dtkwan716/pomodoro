@@ -327,7 +327,7 @@
 .timer-display {
   width: 100%;
   max-width: 640px;
-  padding: 34px 16px;
+  padding: 34px 16px 28px;
   border-block: 1px solid var(--border);
   color: var(--text-h);
   font-family: var(--mono);
@@ -336,7 +336,48 @@
   letter-spacing: 0;
   line-height: 1;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
   box-sizing: border-box;
+}
+
+.timer-display .timer-skip-button {
+  display: inline;
+  margin-left: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-h);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  vertical-align: middle;
+  box-shadow: none;
+  appearance: none;
+}
+
+.timer-display .timer-skip-button:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.timer-display .timer-skip-button:focus-visible {
+  outline: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.timer-display .timer-skip-button:active {
+  transform: translateY(1px);
+}
+
+.timer-display .timer-skip-button:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
 }
 
 .session-actions {
@@ -867,6 +908,7 @@ button:focus-visible,
     max-width: 540px;
     padding: 26px 14px;
     font-size: clamp(82px, 12vw, 140px);
+    gap: 14px;
   }
 
   .camera-panel {
@@ -951,6 +993,7 @@ button:focus-visible,
     max-width: 420px;
     padding: 14px 12px;
     font-size: clamp(54px, 17vw, 86px);
+    gap: 12px;
   }
 
   .timer-focus {
@@ -1069,6 +1112,7 @@ button:focus-visible,
     max-width: 500px;
     padding: 20px 12px;
     font-size: clamp(72px, 12vw, 122px);
+    gap: 14px;
   }
 
   .camera-panel {

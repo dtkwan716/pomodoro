@@ -16,8 +16,6 @@ const Signup = ({accountMode, setAccountMode, setIsOpen}) => {
     try{
       const result = await signUpNewUser(email, password)
       if(result.success){
-        console.log("User Signed Up: ", email, password);
-        console.log(result.data);
         setAccountMode('signout');
         setIsOpen(false);
       } else {
@@ -37,7 +35,6 @@ const Signup = ({accountMode, setAccountMode, setIsOpen}) => {
     try{
       const result = await signInUser(email, password)
       if(result.success){
-        console.log("User Signed In: ", email, password);
         setAccountMode('signout');
         setIsOpen(false);
       } else { 
@@ -58,7 +55,6 @@ const Signup = ({accountMode, setAccountMode, setIsOpen}) => {
     try{
       const result = await signOut()
       if(result.success){
-        console.log("User Signed out.");
         setAccountMode('signup');
         setIsOpen(false);
       }

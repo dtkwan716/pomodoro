@@ -171,7 +171,7 @@ useEffect(() => {
 
         nextDuration = isLongBreak
           ? 1500000
-          : 500000;
+          : 300000;
       } else {
         // Break ended, so begin another work period
         localIsBreak = false;
@@ -231,6 +231,17 @@ useEffect(() => {
   return (
   <div className="timer-display">
     {getFormattedTime(remainingTime)}
+    {isBreak && (
+      <button
+        type="button"
+        className="timer-skip-button"
+        onClick={() => {
+          setIsBreak(false);
+          setRemainingTime(1500000);
+      endTimeRef.current = Date.now() + 1500000;
+      }}>
+      Skip Break
+    </button>)}
   </div>
   );
 }
