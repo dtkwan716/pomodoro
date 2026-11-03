@@ -19,7 +19,7 @@ Live Demo: https://pomodoro-peach-two.vercel.app/
 ## Tech Stack
 
 - React
-- TypeScript
+- JavaScript
 - Vite
 - Supabase
 - PostgreSQL
